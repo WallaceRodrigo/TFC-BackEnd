@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import TeamsService from '../services/TeamsService';
 
-export default class TeamsController {
+class TeamsController {
   constructor(
     private teamsService = new TeamsService(),
   ) {}
@@ -11,3 +11,5 @@ export default class TeamsController {
     res.status(200).json(serviceResponse.data);
   }
 }
+
+export default TeamsController;

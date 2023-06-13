@@ -3,7 +3,7 @@ import ITeams from '../Interfaces/ITeams';
 import { ICRUDModelReader } from '../Interfaces/ICRUDTeams';
 import { ServiceResponse } from '../Interfaces/ServiceResponse';
 
-export default class TeamsService {
+class TeamsService {
   constructor(
     private teamsModel: ICRUDModelReader<ITeams> = new TeamsModel(),
   ) {}
@@ -13,3 +13,5 @@ export default class TeamsService {
     return { status: 'SUCCESSFUL', data: allTeams };
   }
 }
+
+export default TeamsService;
