@@ -20,6 +20,14 @@ class TeamsController {
     const token = jwtUtils.sign(serviceResponse.data);
     return res.status(mapStatusHTTP(serviceResponse.status)).json({ token });
   }
+
+  static async getRole(req: Request, res: Response): Promise<Response> {
+    const token = req.headers.authorization;
+
+    const serviceResponse = await UserService.getRole(token);
+
+    return res.status(mapStatusHTTP(serviceResponse.status)).json(serviceResponse.data);
+  }
 }
 
 export default TeamsController;

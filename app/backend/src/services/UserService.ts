@@ -3,6 +3,7 @@ import UserModel from '../models/UserModel';
 import IUser from '../Interfaces/IUser';
 import { ICRUDUser } from '../Interfaces/ICRUDUser';
 import { ServiceResponse } from '../Interfaces/ServiceResponse';
+import JwtUtils from '../utils/jwtUtils';
 
 class UserService {
   constructor(
@@ -21,6 +22,17 @@ class UserService {
     }
 
     return { status: 'SUCCESSFUL', data: user };
+  }
+
+  static async getRole(token: string | undefined): Promise<ServiceResponse<unknown>> {
+    if (!token) return { status: 'UNAUTHORIZED', data: { message: 'Token not found' } };
+
+    try {
+      const { role } = await JwtUtils.verify(token);
+      return { status: 'SUCCESSFUL', data: { role } };
+    } catch (error) {
+      return { status: 'UNAUTHORIZED', data: { message: 'Token must be a valid token' } };
+    }
   }
 }
 
