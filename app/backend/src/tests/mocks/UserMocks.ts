@@ -10,10 +10,10 @@ export const userMock = {
   password: '$2a$08$xi.Hxk1czAO0nZR..B393u10aED0RQ1N3PAEXQ7HxtLjKPEZBu.PW'
 };
 
-export const validEmail =  "email@email.com";
-
-export const invalidEmail = 'email@email';
+export const validEmail =  "admin@admin.com";
 
 export const validPassword = "secret_admin";
 
-export const invalidPassword = "1234";
+export const invalidEmail = 'email@email.com';
+
+export const invalidPassword = "1234567";
