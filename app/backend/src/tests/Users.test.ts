@@ -5,7 +5,7 @@ import chaiHttp = require('chai-http');
 
 import { app } from '../app';
 import SequelizeUser from '../database/models/SequelizeUser';
-import { invalidEmail, invalidPassword, userMock, validEmail, validPassword } from './mocks/UserMocks';
+import { invalidEmail, invalidPassword, unregisteredEmail, unregisteredPassword, userMock, validEmail, validPassword } from './mocks/UserMocks';
 
 chai.use(chaiHttp);
 
@@ -58,13 +58,36 @@ describe('Login POST EndPoint Test', () => {
   
       const { status, body } = await chai.request(app)
       .post('/login')
-      .send({ email: invalidEmail, password: validPassword });
+      .send({ email: unregisteredEmail, password: validPassword });
   
-      expect(status).to.equal(404);
+      expect(status).to.equal(401);
       expect(body).to.be.deep.equal({ message: "Invalid email or password" });
     })
     
     it ('O login não deve permitir o acesso com um senha não registrado', async () => {
+      const buildUserMock = SequelizeUser.build(userMock);
+      sinon.stub(SequelizeUser, 'findOne').resolves(buildUserMock);
+  
+      const { status, body } = await chai.request(app)
+      .post('/login')
+      .send({ email: validEmail, password: unregisteredPassword });
+  
+      expect(status).to.equal(401);
+      expect(body).to.be.deep.equal({ message: "Invalid email or password" });
+    })
+
+    it ('O login não deve permitir o acesso com um email invalido', async () => {
+      sinon.stub(SequelizeUser, 'findOne').resolves(null);
+  
+      const { status, body } = await chai.request(app)
+      .post('/login')
+      .send({ email: invalidEmail, password: validPassword });
+  
+      expect(status).to.equal(401);
+      expect(body).to.be.deep.equal({ message: "Invalid email or password" });
+    })
+    
+    it ('O login não deve permitir o acesso com um senha invalida', async () => {
       const buildUserMock = SequelizeUser.build(userMock);
       sinon.stub(SequelizeUser, 'findOne').resolves(buildUserMock);
   

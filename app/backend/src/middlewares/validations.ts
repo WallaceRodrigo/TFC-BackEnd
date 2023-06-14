@@ -8,13 +8,13 @@ class Validations {
       return res.status(400).json({ message: 'All fields must be filled' });
     }
 
-    // if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-    //   return res.status(400).json({ message: 'Email must be valid' });
-    // }
+    if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
 
-    // if (password.length < 6) {
-    //   return res.status(400).json({ message: 'Password must have 6 or more characters' });
-    // }
+    if (password.length < 6) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
 
     return next();
   }

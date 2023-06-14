@@ -12,7 +12,7 @@ class UserService {
   public async getUserByEmail(email: string, password: string): Promise<ServiceResponse<IUser>> {
     const user = await this.userModel.findByEmail(email);
 
-    if (!user) return { status: 'NOT_FOUND', data: { message: 'Invalid email or password' } };
+    if (!user) return { status: 'UNAUTHORIZED', data: { message: 'Invalid email or password' } };
 
     const correctPassword = await bcrypt.compare(password, user.password);
 

@@ -14,6 +14,11 @@ export const validEmail =  "admin@admin.com";
 
 export const validPassword = "secret_admin";
 
-export const invalidEmail = 'email@email.com';
+export const unregisteredEmail = 'email@email.com';
 
-export const invalidPassword = "1234567";
+export const unregisteredPassword = "1234567";
+
+export const invalidEmail = 'email@email';
+
+export const invalidPassword = "1234";
+
