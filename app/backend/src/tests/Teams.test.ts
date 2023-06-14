@@ -17,17 +17,18 @@ describe('Teams EndPoints Tests', () => {
   beforeEach(() => {
     sinon.restore();
   })
-
-  it ('GetAll Teams EndPoint - Deve retornar todos os times', async () => {
-    sinon.stub(SequelizeTeams, 'findAll').resolves(getAllMock as any);
-
-    // const chaiResponse: Response = await chai.request(app).get('/teams');
-
-    const { status, body } = await chai.request(app).get('/teams');
-
-    expect(status).to.equal(200);
-    expect(body).to.deep.equal(getAllMock);
-  })
+  describe('GetAll Teams EndPoint', () => {
+    it ('Deve retornar todos os times', async () => {
+      sinon.stub(SequelizeTeams, 'findAll').resolves(getAllMock as any);
+  
+      // const chaiResponse: Response = await chai.request(app).get('/teams');
+  
+      const { status, body } = await chai.request(app).get('/teams');
+  
+      expect(status).to.equal(200);
+      expect(body).to.deep.equal(getAllMock);
+    })
+  }),
 
   describe('GetById Teams EndPoint', () => {
     it ('Deve retornar o time que corresponde ao id desejado', async () => {
