@@ -11,7 +11,7 @@ export default class TeamsModel implements ICRUDModelReader<ITeams> {
   }
 
   async findById(id: ITeams['id']): Promise<ITeams | null> {
-    const dbData = await this.model.findByPk(id);
+    const dbData = await this.model.findOne({ where: { id } });
     if (!dbData) return null;
 
     const { teamName } = dbData;

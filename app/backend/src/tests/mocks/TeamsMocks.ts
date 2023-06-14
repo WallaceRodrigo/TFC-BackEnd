@@ -12,3 +12,8 @@ export const getAllMock = [
     "teamName": "Botafogo"
   },
 ]
+
+export const getByIdMock = {
+  "id": 5,
+  "teamName": "Cruzeiro"
+}
