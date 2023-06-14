@@ -1,8 +1,8 @@
-import { ICRUDModelReader } from '../Interfaces/ICRUDTeams';
+import { ICRUDTeam } from '../Interfaces/ICRUDTeams';
 import SequelizeTeams from '../database/models/SequelizeTeams';
 import ITeams from '../Interfaces/ITeams';
 
-export default class TeamsModel implements ICRUDModelReader<ITeams> {
+export default class TeamsModel implements ICRUDTeam<ITeams> {
   private model = SequelizeTeams;
 
   async findAll(): Promise<ITeams[]> {

@@ -1,4 +1,3 @@
-export interface ICRUDModelReader<T> {
-  findAll(): Promise<T[]>,
-  findById(id: number): Promise<T | null>,
-}
+import { ICRUDFindAll, ICRUDFindById } from './ICRUD';
+
+export type ICRUDTeam<T> = ICRUDFindAll<T> & ICRUDFindById<T>;
