@@ -5,18 +5,19 @@ import chaiHttp = require('chai-http');
 
 import { app } from '../app';
 import SequelizeUser from '../database/models/SequelizeUser';
-import { invalidEmail, invalidPassword, unregisteredEmail, unregisteredPassword, userMock, validEmail, validPassword } from './mocks/UserMocks';
+import { validToken, invalidEmail, invalidPassword, unregisteredEmail, unregisteredPassword, userMock, validEmail, validPassword } from './mocks/UserMocks';
+import JwtUtils from '../utils/jwtUtils';
 
 chai.use(chaiHttp);
 
 const { expect } = chai;
 
-describe('Login POST EndPoint Test', () => {
+describe('Login Test', () => {
   beforeEach(() => {
     sinon.restore();
   })
 
-  describe('Login EndPoint', () => {
+  describe('Login POST EndPoint', () => {
     it ('Deve ser possível fazer login com sucesso', async () => {
       const buildUserMock = SequelizeUser.build(userMock);
       sinon.stub(SequelizeUser, 'findOne').resolves(buildUserMock);
@@ -97,6 +98,50 @@ describe('Login POST EndPoint Test', () => {
   
       expect(status).to.equal(401);
       expect(body).to.be.deep.equal({ message: "Invalid email or password" });
+    })
+  })
+
+  describe('Login GET EndPoint', () => {
+    it('Deve retornar a role do usuário com um token valido', async () => {
+      const buildUserMock = SequelizeUser.build(userMock);
+      sinon.stub(SequelizeUser, 'findOne').resolves(buildUserMock);
+      
+      await chai.request(app)
+      .post('/login')
+      .send({email: validEmail, password: validPassword})
+
+      sinon.stub(JwtUtils, 'sign').returns(validToken)
+  
+      const { status, body } = await chai.request(app)
+      .get('/login/role').set('Authorization', validToken)
+
+      
+      expect(status).to.equal(200);
+      expect(body.role).to.be.deep.equal('admin');
+    })
+
+    it('Deve retornar erro com um token invalido', async () => {
+      const buildUserMock = SequelizeUser.build(userMock);
+      sinon.stub(SequelizeUser, 'findOne').resolves(buildUserMock);
+  
+      const { status, body } = await chai.request(app)
+      .get('/login/role').set('Authorization', 'tokenInvalido')
+
+      
+      expect(status).to.equal(401);
+      expect(body).to.be.deep.equal({ "message": "Token must be a valid token" });
+    })
+
+    it('Deve retornar erro sem um token', async () => {
+      const buildUserMock = SequelizeUser.build(userMock);
+      sinon.stub(SequelizeUser, 'findOne').resolves(buildUserMock);
+  
+      const { status, body } = await chai.request(app)
+      .get('/login/role')
+
+      
+      expect(status).to.equal(401);
+      expect(body).to.be.deep.equal({ "message": "Token not found" });
     })
   })
 });

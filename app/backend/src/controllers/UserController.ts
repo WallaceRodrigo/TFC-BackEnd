@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import UserService from '../services/UserService';
 import mapStatusHTTP from '../utils/mapStatusHTTP';
-import { sign } from '../utils/jwtUtils';
+import jwtUtils from '../utils/jwtUtils';
 
 class TeamsController {
   constructor(
@@ -17,7 +17,7 @@ class TeamsController {
       return res.status(mapStatusHTTP(serviceResponse.status)).json(serviceResponse.data);
     }
 
-    const token = sign(serviceResponse.data);
+    const token = jwtUtils.sign(serviceResponse.data);
     return res.status(mapStatusHTTP(serviceResponse.status)).json({ token });
   }
 }
