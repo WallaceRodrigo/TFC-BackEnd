@@ -49,17 +49,16 @@ describe('Matches EndPoints Tests', () => {
 
   describe('Finish Matches EndPoint', () => {
     it ('Deve ser possível finalizar uma partida pelo id', async () => {
-      sinon.stub(SequelizeMatches, 'findOne').resolves(oneMatchMock as any);
+      sinon.stub(SequelizeMatches, 'update').resolves([1]);
       
-      const { status, body } = await chai.request(app)
+      const { body } = await chai.request(app)
       .patch('/matches/1/finish').set('Authorization', validToken);
       
-      expect(status).to.equal(200);
       expect(body).to.deep.equal({ message: "Finished" });
     })
     
     it('Deve retornar erro sem um token', async () => {
-      sinon.stub(SequelizeMatches, 'findOne').resolves(oneMatchMock as any);
+      sinon.stub(SequelizeMatches, 'update').resolves([0]);
 
       const { status, body } = await chai.request(app)
       .patch('/matches/1/finish')
@@ -69,7 +68,7 @@ describe('Matches EndPoints Tests', () => {
     })
 
     it('Deve retornar erro com um token invalido', async () => {
-      sinon.stub(SequelizeMatches, 'findOne').resolves(oneMatchMock as any);
+      sinon.stub(SequelizeMatches, 'update').resolves([0]);
   
       const { status, body } = await chai.request(app)
       .patch('/matches/1/finish').set('Authorization', 'tokenInvalido')

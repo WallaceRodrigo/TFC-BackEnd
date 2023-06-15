@@ -2,7 +2,7 @@ import MatchesModel from '../models/MatchesModel';
 import IMatches from '../Interfaces/IMatches';
 import { ICRUDMatches } from '../Interfaces/ICRUDMatches';
 import { ServiceResponse } from '../Interfaces/ServiceResponse';
-// import JwtUtils from '../utils/jwtUtils';
+import JwtUtils from '../utils/jwtUtils';
 
 class MatchesService {
   constructor(
@@ -33,16 +33,22 @@ class MatchesService {
   //   return { status: 'SUCCESSFUL', data: match };
   // }
 
-  // async findByInProgress(id:number, token: string | undefined): Promise<ServiceResponse<unknown>> {
-  //   if (!token) return { status: 'UNAUTHORIZED', data: { message: 'Token not found' } };
+  async finishMatch(id:number, token: string | undefined): Promise<ServiceResponse<unknown>> {
+    if (!token) return { status: 'UNAUTHORIZED', data: { message: 'Token not found' } };
 
-  //   try {
-  //     const { role } = await JwtUtils.verify(token);
-  //     return { status: 'SUCCESSFUL', data: { role } };
-  //   } catch (error) {
-  //     return { status: 'UNAUTHORIZED', data: { message: 'Token must be a valid token' } };
-  //   }
-  // }
+    try {
+      await JwtUtils.verify(token);
+
+      const update = { inProgress: false };
+      const match = await this.matchesModel.updateMatch(id, update);
+
+      if (!match) return { status: 'NOT_FOUND', data: { message: 'Match not found' } };
+
+      return { status: 'SUCCESSFUL', data: { message: 'Finished' } };
+    } catch (error) {
+      return { status: 'UNAUTHORIZED', data: { message: 'Token must be a valid token' } };
+    }
+  }
 }
 
 export default MatchesService;

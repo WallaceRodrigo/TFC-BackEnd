@@ -7,6 +7,6 @@ const matchesRouter = Router();
 
 matchesRouter.get('/', (req, res) => matchesController.getAllMatches(req, res));
 
-// matchesRouter.get('/:id', (req, res) => teamsController.getTeamById(req, res));
+matchesRouter.patch('/:id/finish', (req, res) => matchesController.finishMatch(req, res));
 
 export default matchesRouter;

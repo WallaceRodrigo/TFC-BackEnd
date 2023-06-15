@@ -48,4 +48,12 @@ export default class MatchesModel implements ICRUDMatches<IMatches> {
 
     return dbData;
   }
+
+  async updateMatch(id: number, match: Partial<IMatches>): Promise<IMatches | null> {
+    const [affectedRows] = await this.model.update(match, { where: { id } });
+
+    if (affectedRows === 0) return null;
+
+    return this.findById(id);
+  }
 }

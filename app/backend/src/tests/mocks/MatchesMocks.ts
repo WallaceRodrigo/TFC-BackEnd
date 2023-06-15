@@ -97,7 +97,7 @@ export const oneMatchMock = {
   "homeTeamGoals": 1,
   "awayTeamId": 8,
   "awayTeamGoals": 1,
-  "inProgress": false,
+  "inProgress": true,
   "homeTeam": {
     "teamName": "São Paulo"
   },

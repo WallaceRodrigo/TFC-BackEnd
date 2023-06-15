@@ -19,6 +19,14 @@ class MatchesController {
     return res.status(mapStatusHTTP(serviceResponse.status)).json(serviceResponse.data);
   }
 
+  public async finishMatch(req: Request, res: Response): Promise<Response> {
+    const { id } = req.params;
+    const token = req.headers.authorization;
+
+    const serviceResponse = await this.matchesService.finishMatch(Number(id), token);
+    return res.status(mapStatusHTTP(serviceResponse.status)).json(serviceResponse.data);
+  }
+
   // public async getTeamById(req: Request, res: Response): Promise<Response> {
   //   const { id } = req.params;
 
