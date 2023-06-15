@@ -54,6 +54,8 @@ export default class MatchesModel implements ICRUDMatches<IMatches> {
 
     if (affectedRows === 0) return null;
 
-    return this.findById(id);
+    const dbData = await this.model.findAll({ where: { id } });
+    const actualMatch = await this.mapMatches(dbData);
+    return actualMatch[0];
   }
 }

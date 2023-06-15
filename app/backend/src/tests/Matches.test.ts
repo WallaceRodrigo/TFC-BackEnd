@@ -5,7 +5,8 @@ import chaiHttp = require('chai-http');
 
 import { app } from '../app';
 import SequelizeMatches from '../database/models/SequelizeMatches';
-import { getAllMatchesMock, inProgressMatchesMock, finishMatchesMock, oneMatchMock, updatedOneMatchMock, validToken } from './mocks/MatchesMocks';
+import { getAllMatchesMock, inProgressMatchesMock, finishMatchesMock, oneMatchMock, updatedOneMatchMock, validToken, updatedResponse } from './mocks/MatchesMocks';
+import JwtUtils from '../utils/jwtUtils';
 
 chai.use(chaiHttp);
 
@@ -80,18 +81,23 @@ describe('Matches EndPoints Tests', () => {
 
   describe('Update Matches EndPoint', () => {
     it ('Deve ser possível atualizar uma partida pelo id', async () => {
-      sinon.stub(SequelizeMatches, 'findOne').resolves(oneMatchMock as any);
-      
+      sinon.stub(SequelizeMatches, 'update').resolves([2]);
+
+      // sinon.stub(JwtUtils, 'verify').returns(updatedOneMatchMock)
+
       const { status, body } = await chai.request(app)
       .patch('/matches/1').set('Authorization', validToken)
-      .send({ homeTeamGoals: 3, awayTeamGoals: 1 });
+      .send({
+        homeTeamGoals: 3,
+        awayTeamGoals: 1
+      });
       
       expect(status).to.equal(200);
       expect(body).to.deep.equal(updatedOneMatchMock);
     })
     
     it('Deve retornar erro sem um token', async () => {
-      sinon.stub(SequelizeMatches, 'findOne').resolves(oneMatchMock as any);
+      sinon.stub(SequelizeMatches, 'update').resolves([0]);
 
       const { status, body } = await chai.request(app).patch('/matches/1')
 
@@ -100,7 +106,7 @@ describe('Matches EndPoints Tests', () => {
     })
 
     it('Deve retornar erro com um token invalido', async () => {
-      sinon.stub(SequelizeMatches, 'findOne').resolves(oneMatchMock as any);
+      sinon.stub(SequelizeMatches, 'update').resolves([0]);
   
       const { status, body } = await chai.request(app)
       .patch('/matches/1').set('Authorization', 'tokenInvalido')

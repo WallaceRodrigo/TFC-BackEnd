@@ -13,8 +13,8 @@ export default class JwtUtils {
     return token;
   }
 
-  static verify(token: string): IUser {
+  static verify<T>(token: string): T {
     const decoded = jwt.verify(token, secret);
-    return decoded as IUser;
+    return decoded as T;
   }
 }

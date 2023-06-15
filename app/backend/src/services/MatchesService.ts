@@ -25,14 +25,6 @@ class MatchesService {
     return { status: 'SUCCESSFUL', data: matches };
   }
 
-  // public async findById(id: number): Promise<ServiceResponse<IMatches>> {
-  //   const match = await this.matchesModel.findById(id);
-
-  //   if (!match) return { status: 'NOT_FOUND', data: { message: 'Match not found' } };
-
-  //   return { status: 'SUCCESSFUL', data: match };
-  // }
-
   async finishMatch(id:number, token: string | undefined): Promise<ServiceResponse<unknown>> {
     if (!token) return { status: 'UNAUTHORIZED', data: { message: 'Token not found' } };
 
@@ -49,6 +41,31 @@ class MatchesService {
       return { status: 'UNAUTHORIZED', data: { message: 'Token must be a valid token' } };
     }
   }
+
+  async updateMatch(id:number, token: string | undefined, update: Partial<IMatches>)
+    : Promise<ServiceResponse<unknown>> {
+    if (!token) return { status: 'UNAUTHORIZED', data: { message: 'Token not found' } };
+
+    try {
+      await JwtUtils.verify(token);
+
+      const match = await this.matchesModel.updateMatch(id, update);
+
+      if (!match) return { status: 'NOT_FOUND', data: { message: 'Match not found' } };
+
+      return { status: 'SUCCESSFUL', data: match };
+    } catch (error) {
+      return { status: 'UNAUTHORIZED', data: { message: 'Token must be a valid token' } };
+    }
+  }
+
+  // public async findById(id: number): Promise<ServiceResponse<IMatches>> {
+  //   const match = await this.matchesModel.findById(id);
+
+  //   if (!match) return { status: 'NOT_FOUND', data: { message: 'Match not found' } };
+
+  //   return { status: 'SUCCESSFUL', data: match };
+  // }
 }
 
 export default MatchesService;

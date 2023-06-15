@@ -28,7 +28,7 @@ class UserService {
     if (!token) return { status: 'UNAUTHORIZED', data: { message: 'Token not found' } };
 
     try {
-      const { role } = await JwtUtils.verify(token);
+      const { role } = await JwtUtils.verify<IUser>(token);
       return { status: 'SUCCESSFUL', data: { role } };
     } catch (error) {
       return { status: 'UNAUTHORIZED', data: { message: 'Token must be a valid token' } };

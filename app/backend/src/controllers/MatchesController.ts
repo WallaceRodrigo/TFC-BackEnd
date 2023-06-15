@@ -27,6 +27,14 @@ class MatchesController {
     return res.status(mapStatusHTTP(serviceResponse.status)).json(serviceResponse.data);
   }
 
+  public async updateMatch(req: Request, res: Response): Promise<Response> {
+    const { id } = req.params;
+    const token = req.headers.authorization;
+
+    const serviceResponse = await this.matchesService.updateMatch(Number(id), token, req.body);
+    return res.status(mapStatusHTTP(serviceResponse.status)).json(serviceResponse.data);
+  }
+
   // public async getTeamById(req: Request, res: Response): Promise<Response> {
   //   const { id } = req.params;
 
