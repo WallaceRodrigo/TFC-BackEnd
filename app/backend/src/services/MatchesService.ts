@@ -55,8 +55,6 @@ class MatchesService {
 
       const match = await this.matchesModel.updateMatch(id, update);
 
-      if (!match) return { status: 'NOT_FOUND', data: { message: MATH_NOT_FOUND } };
-
       return { status: 'SUCCESSFUL', data: match };
     } catch (error) {
       return { status: 'UNAUTHORIZED', data: { message: TOKEN_MUST_BE_VALID } };
@@ -69,9 +67,20 @@ class MatchesService {
     try {
       await JwtUtils.verify(token);
 
-      const newMatch = await this.matchesModel.create(match);
+      const { homeTeamId, awayTeamId } = match;
+      if (homeTeamId === awayTeamId) {
+        return { status: 'UNPROCESSABLE_ENTITY',
+          data: { message: 'It is not possible to create a match with two equal teams' } };
+      }
 
-      if (!newMatch) return { status: 'NOT_FOUND', data: { message: MATH_NOT_FOUND } };
+      const homeTeamIdExists = await this.matchesModel.findById(homeTeamId);
+      const awayTeamIdIdExists = await this.matchesModel.findById(awayTeamId);
+
+      if (!homeTeamIdExists || !awayTeamIdIdExists) {
+        return { status: 'NOT_FOUND', data: { message: 'There is no team with such id!' } };
+      }
+
+      const newMatch = await this.matchesModel.create(match);
 
       return { status: 'CREATED', data: newMatch };
     } catch (error) {

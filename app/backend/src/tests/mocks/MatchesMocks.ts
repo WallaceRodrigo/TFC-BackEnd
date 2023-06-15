@@ -143,3 +143,17 @@ export const responseCreateMatchMock = {
   "awayTeamGoals": 2,
   "inProgress": true,
 }
+
+export const badRequestCreateMatchMock1 = {
+  "homeTeamId": 5,
+  "awayTeamId": 5,
+  "homeTeamGoals": 2,
+  "awayTeamGoals": 2,
+}
+
+export const badRequestCreateMatchMock2 = {
+  "homeTeamId": 120,
+  "awayTeamId": 8,
+  "homeTeamGoals": 2,
+  "awayTeamGoals": 2,
+}

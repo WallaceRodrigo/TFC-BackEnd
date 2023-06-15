@@ -10,6 +10,8 @@ export default function mapStatusHTTP(status: string): number {
       return 400;
     case 'NOT_FOUND':
       return 404;
+    case 'UNPROCESSABLE_ENTITY':
+      return 422;
     default:
       return 500;
   }

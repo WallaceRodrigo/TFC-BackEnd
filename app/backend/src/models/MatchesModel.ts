@@ -73,10 +73,10 @@ export default class MatchesModel implements ICRUDMatches<IMatches> {
     };
   }
 
-  // async findById(id: IMatches['id']): Promise<IMatches | null> {
-  //   const dbData = await this.model.findOne({ where: { id } });
-  //   if (!dbData) return null;
+  async findById(id: IMatches['id']): Promise<IMatches | null> {
+    const dbData = await this.model.findOne({ where: { id } });
+    if (!dbData) return null;
 
-  //   return dbData;
-  // }
+    return dbData;
+  }
 }

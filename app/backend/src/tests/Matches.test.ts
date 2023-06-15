@@ -14,7 +14,9 @@ import { getAllMatchesMock,
   validToken,
   updatedResponse,
   requestCreateMatchMock,
-  responseCreateMatchMock
+  responseCreateMatchMock,
+  badRequestCreateMatchMock1,
+  badRequestCreateMatchMock2
 } from './mocks/MatchesMocks';
 
 chai.use(chaiHttp);
@@ -91,9 +93,9 @@ describe('Matches EndPoints Tests', () => {
   describe('Update Matches EndPoint', () => {
     it ('Deve ser possível atualizar uma partida pelo id', async () => {
       sinon.stub(SequelizeMatches, 'update').resolves([2]);
-      sinon.stub(SequelizeMatches, 'findAll').resolves(updatedOneMatchMock as any);
+      // sinon.stub(SequelizeMatches, 'findAll').resolves(updatedOneMatchMock as any);
 
-      sinon.stub(JwtUtils, 'verify').returns(updatedOneMatchMock)
+      // sinon.stub(JwtUtils, 'verify').returns(updatedOneMatchMock)
 
       const { status, body } = await chai.request(app)
       .patch('/matches/1').set('Authorization', validToken)
@@ -160,6 +162,28 @@ describe('Matches EndPoints Tests', () => {
 
       expect(status).to.equal(401);
       expect(body).to.be.deep.equal({ message: "Token must be a valid token" });
+    })
+
+    it('Deve retornar erro com times iguais', async () => {
+      const matchMock = SequelizeMatches.build(responseCreateMatchMock);
+      sinon.stub(SequelizeMatches, 'create').resolves(matchMock);
+  
+      const { status, body } = await chai.request(app)
+      .post('/matches').set('Authorization', validToken).send(badRequestCreateMatchMock1);
+
+      expect(status).to.equal(422);
+      expect(body).to.be.deep.equal({ message: "It is not possible to create a match with two equal teams" });
+    })
+
+    it('Deve retornar erro com times inexistentes', async () => {
+      const matchMock = SequelizeMatches.build(responseCreateMatchMock);
+      sinon.stub(SequelizeMatches, 'create').resolves(matchMock);
+  
+      const { status, body } = await chai.request(app)
+      .post('/matches').set('Authorization', validToken).send(badRequestCreateMatchMock2);
+
+      expect(status).to.equal(404);
+      expect(body).to.be.deep.equal({ message: "There is no team with such id!" });
     })
   })
 });
