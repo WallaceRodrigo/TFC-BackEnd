@@ -106,15 +106,14 @@ describe('Login Test', () => {
       const buildUserMock = SequelizeUser.build(userMock);
       sinon.stub(SequelizeUser, 'findOne').resolves(buildUserMock);
       
-      await chai.request(app)
-      .post('/login')
-      .send({email: validEmail, password: validPassword})
+      // await chai.request(app)
+      // .post('/login')
+      // .send({email: validEmail, password: validPassword})
 
-      sinon.stub(JwtUtils, 'sign').returns(validToken)
+      // sinon.stub(JwtUtils, 'sign').returns(validToken)
   
       const { status, body } = await chai.request(app)
-      .get('/login/role').set('Authorization', validToken)
-
+      .get('/login/role').set('Authorization', validToken);
       
       expect(status).to.equal(200);
       expect(body.role).to.be.deep.equal('admin');
