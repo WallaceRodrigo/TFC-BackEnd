@@ -4,6 +4,10 @@ import { ICRUDMatches } from '../Interfaces/ICRUDMatches';
 import { ServiceResponse } from '../Interfaces/ServiceResponse';
 import JwtUtils from '../utils/jwtUtils';
 
+const TOKEN_NOT_FOUND = 'Token not found';
+const MATH_NOT_FOUND = 'Match not found';
+const TOKEN_MUST_BE_VALID = 'Token must be a valid token';
+
 class MatchesService {
   constructor(
     private matchesModel: ICRUDMatches<IMatches> = new MatchesModel(),
@@ -26,7 +30,7 @@ class MatchesService {
   }
 
   async finishMatch(id:number, token: string | undefined): Promise<ServiceResponse<unknown>> {
-    if (!token) return { status: 'UNAUTHORIZED', data: { message: 'Token not found' } };
+    if (!token) return { status: 'UNAUTHORIZED', data: { message: TOKEN_NOT_FOUND } };
 
     try {
       await JwtUtils.verify(token);
@@ -34,28 +38,44 @@ class MatchesService {
       const update = { inProgress: false };
       const match = await this.matchesModel.updateMatch(id, update);
 
-      if (!match) return { status: 'NOT_FOUND', data: { message: 'Match not found' } };
+      if (!match) return { status: 'NOT_FOUND', data: { message: MATH_NOT_FOUND } };
 
       return { status: 'SUCCESSFUL', data: { message: 'Finished' } };
     } catch (error) {
-      return { status: 'UNAUTHORIZED', data: { message: 'Token must be a valid token' } };
+      return { status: 'UNAUTHORIZED', data: { message: TOKEN_MUST_BE_VALID } };
     }
   }
 
   async updateMatch(id:number, token: string | undefined, update: Partial<IMatches>)
     : Promise<ServiceResponse<unknown>> {
-    if (!token) return { status: 'UNAUTHORIZED', data: { message: 'Token not found' } };
+    if (!token) return { status: 'UNAUTHORIZED', data: { message: TOKEN_NOT_FOUND } };
 
     try {
       await JwtUtils.verify(token);
 
       const match = await this.matchesModel.updateMatch(id, update);
 
-      if (!match) return { status: 'NOT_FOUND', data: { message: 'Match not found' } };
+      if (!match) return { status: 'NOT_FOUND', data: { message: MATH_NOT_FOUND } };
 
       return { status: 'SUCCESSFUL', data: match };
     } catch (error) {
-      return { status: 'UNAUTHORIZED', data: { message: 'Token must be a valid token' } };
+      return { status: 'UNAUTHORIZED', data: { message: TOKEN_MUST_BE_VALID } };
+    }
+  }
+
+  async createMatch(token:string | undefined, match: IMatches): Promise<ServiceResponse<IMatches>> {
+    if (!token) return { status: 'UNAUTHORIZED', data: { message: TOKEN_NOT_FOUND } };
+
+    try {
+      await JwtUtils.verify(token);
+
+      const newMatch = await this.matchesModel.create(match);
+
+      if (!newMatch) return { status: 'NOT_FOUND', data: { message: MATH_NOT_FOUND } };
+
+      return { status: 'CREATED', data: newMatch };
+    } catch (error) {
+      return { status: 'UNAUTHORIZED', data: { message: TOKEN_MUST_BE_VALID } };
     }
   }
 

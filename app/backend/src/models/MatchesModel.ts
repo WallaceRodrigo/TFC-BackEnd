@@ -3,6 +3,8 @@ import IMatches from '../Interfaces/IMatches';
 import SequelizeMatches from '../database/models/SequelizeMatches';
 import TeamsModel from './TeamsModel';
 
+export type NewEntity<T> = Omit<T, 'id'>;
+
 export default class MatchesModel implements ICRUDMatches<IMatches> {
   private model = SequelizeMatches;
   private teamModel = new TeamsModel();
@@ -42,13 +44,6 @@ export default class MatchesModel implements ICRUDMatches<IMatches> {
     return this.mapMatches(dbData);
   }
 
-  async findById(id: IMatches['id']): Promise<IMatches | null> {
-    const dbData = await this.model.findOne({ where: { id } });
-    if (!dbData) return null;
-
-    return dbData;
-  }
-
   async updateMatch(id: number, match: Partial<IMatches>): Promise<IMatches | null> {
     const [affectedRows] = await this.model.update(match, { where: { id } });
 
@@ -58,4 +53,30 @@ export default class MatchesModel implements ICRUDMatches<IMatches> {
     const actualMatch = await this.mapMatches(dbData);
     return actualMatch[0];
   }
+
+  async create(data: NewEntity<IMatches>): Promise<IMatches> {
+    const { id,
+      homeTeamId,
+      homeTeamGoals,
+      awayTeamId,
+      awayTeamGoals,
+      inProgress,
+    } = await this.model.create({ ...data, inProgress: true });
+
+    return {
+      id,
+      homeTeamId,
+      homeTeamGoals,
+      awayTeamId,
+      awayTeamGoals,
+      inProgress,
+    };
+  }
+
+  // async findById(id: IMatches['id']): Promise<IMatches | null> {
+  //   const dbData = await this.model.findOne({ where: { id } });
+  //   if (!dbData) return null;
+
+  //   return dbData;
+  // }
 }

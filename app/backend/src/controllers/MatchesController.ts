@@ -35,6 +35,13 @@ class MatchesController {
     return res.status(mapStatusHTTP(serviceResponse.status)).json(serviceResponse.data);
   }
 
+  public async createMatch(req: Request, res: Response): Promise<Response> {
+    const token = req.headers.authorization;
+
+    const serviceResponse = await this.matchesService.createMatch(token, req.body);
+    return res.status(mapStatusHTTP(serviceResponse.status)).json(serviceResponse.data);
+  }
+
   // public async getTeamById(req: Request, res: Response): Promise<Response> {
   //   const { id } = req.params;
 

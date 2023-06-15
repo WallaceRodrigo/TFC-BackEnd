@@ -4,9 +4,18 @@ import * as chai from 'chai';
 import chaiHttp = require('chai-http');
 
 import { app } from '../app';
-import SequelizeMatches from '../database/models/SequelizeMatches';
-import { getAllMatchesMock, inProgressMatchesMock, finishMatchesMock, oneMatchMock, updatedOneMatchMock, validToken, updatedResponse } from './mocks/MatchesMocks';
 import JwtUtils from '../utils/jwtUtils';
+import SequelizeMatches from '../database/models/SequelizeMatches';
+import { getAllMatchesMock,
+  inProgressMatchesMock,
+  finishMatchesMock,
+  oneMatchMock,
+  updatedOneMatchMock,
+  validToken,
+  updatedResponse,
+  requestCreateMatchMock,
+  responseCreateMatchMock
+} from './mocks/MatchesMocks';
 
 chai.use(chaiHttp);
 
@@ -82,8 +91,9 @@ describe('Matches EndPoints Tests', () => {
   describe('Update Matches EndPoint', () => {
     it ('Deve ser possível atualizar uma partida pelo id', async () => {
       sinon.stub(SequelizeMatches, 'update').resolves([2]);
+      sinon.stub(SequelizeMatches, 'findAll').resolves(updatedOneMatchMock as any);
 
-      // sinon.stub(JwtUtils, 'verify').returns(updatedOneMatchMock)
+      sinon.stub(JwtUtils, 'verify').returns(updatedOneMatchMock)
 
       const { status, body } = await chai.request(app)
       .patch('/matches/1').set('Authorization', validToken)
@@ -110,6 +120,43 @@ describe('Matches EndPoints Tests', () => {
   
       const { status, body } = await chai.request(app)
       .patch('/matches/1').set('Authorization', 'tokenInvalido')
+
+      expect(status).to.equal(401);
+      expect(body).to.be.deep.equal({ message: "Token must be a valid token" });
+    })
+  })
+
+  describe('Create Matches EndPoint', () => {
+    it ('Deve ser possível criar uma partida nova partida', async () => {
+      const matchMock = SequelizeMatches.build(responseCreateMatchMock);
+      sinon.stub(SequelizeMatches, 'create').resolves(matchMock);
+
+      // sinon.stub(JwtUtils, 'verify').returns(updatedOneMatchMock)
+
+      const { status, body } = await chai.request(app)
+      .post('/matches').set('Authorization', validToken)
+      .send(requestCreateMatchMock);
+      
+      expect(status).to.equal(201);
+      expect(body).to.deep.equal(responseCreateMatchMock);
+    })
+    
+    it('Deve retornar erro sem um token', async () => {
+      const matchMock = SequelizeMatches.build(responseCreateMatchMock);
+      sinon.stub(SequelizeMatches, 'create').resolves(matchMock);
+
+      const { status, body } = await chai.request(app).post('/matches').send(requestCreateMatchMock);
+
+      expect(status).to.equal(401);
+      expect(body).to.be.deep.equal({ message: "Token not found" });
+    })
+
+    it('Deve retornar erro com um token invalido', async () => {
+      const matchMock = SequelizeMatches.build(responseCreateMatchMock);
+      sinon.stub(SequelizeMatches, 'create').resolves(matchMock);
+  
+      const { status, body } = await chai.request(app)
+      .post('/matches').set('Authorization', 'tokenInvalido').send(requestCreateMatchMock);
 
       expect(status).to.equal(401);
       expect(body).to.be.deep.equal({ message: "Token must be a valid token" });
