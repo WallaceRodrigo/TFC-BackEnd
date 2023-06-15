@@ -7,8 +7,7 @@ export default class MatchesModel implements ICRUDMatches<IMatches> {
   private model = SequelizeMatches;
   private teamModel = new TeamsModel();
 
-  async findAll(): Promise<IMatches[]> {
-    const dbData = await this.model.findAll();
+  async mapMatches(dbData: IMatches[]): Promise<IMatches[]> {
     const matchInfos = dbData.map(async ({
       id, homeTeamId, homeTeamGoals, awayTeamId, awayTeamGoals, inProgress,
     }) => {
@@ -30,15 +29,21 @@ export default class MatchesModel implements ICRUDMatches<IMatches> {
     return Promise.all(matchInfos);
   }
 
-  async findById(id: IMatches['id']): Promise<IMatches | null> {
-    const dbData = await this.model.findOne({ where: { id } });
-    if (!dbData) return null;
+  async findAll(): Promise<IMatches[]> {
+    const dbData = await this.model.findAll();
 
-    return dbData;
+    return this.mapMatches(dbData);
   }
 
   async findByInProgress(inProgress: boolean): Promise<IMatches[] | null> {
     const dbData = await this.model.findAll({ where: { inProgress } });
+    if (!dbData) return null;
+
+    return this.mapMatches(dbData);
+  }
+
+  async findById(id: IMatches['id']): Promise<IMatches | null> {
+    const dbData = await this.model.findOne({ where: { id } });
     if (!dbData) return null;
 
     return dbData;

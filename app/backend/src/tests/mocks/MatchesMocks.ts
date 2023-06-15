@@ -26,6 +26,20 @@ export const getAllMatchesMock = [
     "awayTeam": {
       "teamName": "Internacional"
     }
+  },
+  {
+    "id": 42,
+    "homeTeamId": 6,
+    "homeTeamGoals": 1,
+    "awayTeamId": 1,
+    "awayTeamGoals": 0,
+    "inProgress": true,
+    "homeTeam": {
+      "teamName": "Ferroviária"
+    },
+    "awayTeam": {
+      "teamName": "Avaí/Kindermann"
+    }
   }
 ]
 
@@ -73,20 +87,6 @@ export const finishMatchesMock = [
     },
     "awayTeam": {
       "teamName": "Grêmio"
-    }
-  },
-  {
-    "id": 2,
-    "homeTeamId": 9,
-    "homeTeamGoals": 1,
-    "awayTeamId": 14,
-    "awayTeamGoals": 1,
-    "inProgress": false,
-    "homeTeam": {
-      "teamName": "Internacional"
-    },
-    "awayTeam": {
-      "teamName": "Santos"
     }
   }
 ];

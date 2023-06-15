@@ -15,6 +15,16 @@ class MatchesService {
     return { status: 'SUCCESSFUL', data: matches };
   }
 
+  async findByInProgress(query: string): Promise<ServiceResponse<IMatches[] | null>> {
+    if (query === 'true') {
+      const matches = await this.matchesModel.findByInProgress(true);
+      return { status: 'SUCCESSFUL', data: matches };
+    }
+
+    const matches = await this.matchesModel.findByInProgress(false);
+    return { status: 'SUCCESSFUL', data: matches };
+  }
+
   // public async findById(id: number): Promise<ServiceResponse<IMatches>> {
   //   const match = await this.matchesModel.findById(id);
 
@@ -23,7 +33,7 @@ class MatchesService {
   //   return { status: 'SUCCESSFUL', data: match };
   // }
 
-  // static async findByInProgress(id:number, token: string | undefined): Promise<ServiceResponse<unknown>> {
+  // async findByInProgress(id:number, token: string | undefined): Promise<ServiceResponse<unknown>> {
   //   if (!token) return { status: 'UNAUTHORIZED', data: { message: 'Token not found' } };
 
   //   try {
