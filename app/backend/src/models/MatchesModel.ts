@@ -28,7 +28,7 @@ export default class MatchesModel implements ICRUDMatches<IMatches> {
       };
     });
 
-    return Promise.all(matchInfos);
+    return Promise.all(matchInfos) as Promise<IMatches[]>;
   }
 
   async findAll(): Promise<IMatches[]> {

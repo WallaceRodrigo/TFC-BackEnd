@@ -51,11 +51,20 @@ export const calcGoals = (homeMatch: IMatches, allMatches: IMatches[]) => {
   return { goalsFavor, goalsOwn };
 };
 
+export const calcEfficiency = (homeMatch: IMatches, allMatches: IMatches[]) => {
+  const TotalGamesHomeMatch = allGames(homeMatch, allMatches);
+  const totalPoints = calcPoints(homeMatch, allMatches);
+  const totalGames = TotalGamesHomeMatch.length;
+
+  return (totalPoints / (totalGames * 3)) * 100;
+};
+
 export const calcLeaderBoard = (homeMatch: IMatches, allMatches: IMatches[]) => {
   const TotalGamesHomeMatch = allGames(homeMatch, allMatches);
   const winLossDraw = calcWinLossDraw(homeMatch, allMatches);
   const totalPoints = calcPoints(homeMatch, allMatches);
   const totalGoals = calcGoals(homeMatch, allMatches);
+  const efficiency = Number(calcEfficiency(homeMatch, allMatches).toFixed(2));
 
   return {
     name: homeMatch.homeTeam?.teamName,
@@ -66,23 +75,24 @@ export const calcLeaderBoard = (homeMatch: IMatches, allMatches: IMatches[]) => 
     totalLosses: winLossDraw.loss,
     goalsFavor: totalGoals.goalsFavor,
     goalsOwn: totalGoals.goalsOwn,
+    goalsBalance: totalGoals.goalsFavor - totalGoals.goalsOwn,
+    efficiency,
   };
 };
 
 export const orderLeaderBoard = (leaderBoard: ILeaderBoard[]) => {
-  // const removeDuplicate = leaderBoard.reduce((acc: ILeaderBoard, cur: ILeaderBoard) => {
-  //   const existingItem = acc.find((el: ILeaderBoard) => el.name === cur.name);
-  //   if (!existingItem) {
-  //     acc.push(cur);
-  //   }
-  //   return acc;
-  // }, []);
-
-  const removeDuplicate = Array.from(new Set(leaderBoard.map(JSON.stringify))).map(JSON.parse);
+  const removeDuplicate = leaderBoard.reduce<ILeaderBoard[]>((acc, cur) => {
+    const existingItem = acc.find((el: ILeaderBoard) => el.name === cur.name);
+    if (!existingItem) {
+      acc.push(cur);
+    }
+    return acc;
+  }, []);
 
   return removeDuplicate.sort((a: ILeaderBoard, b: ILeaderBoard) => {
     if (b.totalPoints !== a.totalPoints) return b.totalPoints - a.totalPoints;
     if (a.totalVictories !== b.totalVictories) return b.totalVictories - a.totalVictories;
+    if (a.goalsBalance !== b.goalsBalance) return b.goalsBalance - a.goalsBalance;
     if (a.goalsFavor !== b.goalsFavor) return b.goalsFavor - a.goalsFavor;
     return a.goalsOwn - b.goalsOwn;
   });

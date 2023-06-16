@@ -28,7 +28,7 @@ class LeaderBoardService {
       (homeMatch) => (calcLeaderBoard(homeMatch, allHomeMatches)),
     );
 
-    const finishLeaderBoard = orderLeaderBoard(HomeLeaderBoard);
+    const finishLeaderBoard = orderLeaderBoard(HomeLeaderBoard as ILeaderBoard[]);
 
     return { status: 'SUCCESSFUL', data: finishLeaderBoard };
   }
